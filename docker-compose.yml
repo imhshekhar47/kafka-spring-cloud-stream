@@ -1,0 +1,54 @@
+version: '3'
+
+services:
+  kafka-zookeeper:
+    image: zookeeper:latest
+    hostname: kafka-zookeeper
+    container_name: kafka-zookeeper
+    tty: true
+
+  kafka-broker_1:
+    image: hs47/kafka:latest
+    hostname: kafka-broker_1
+    container_name: kafka-broker_1
+    environment:
+      - KAFKA_BROKER_ID=1
+      - ZOOKEEPER_HOSTNAME=kafka-zookeeper
+      - KAFKA_ADVERT_LISTANER_HOST=localhost
+      - KAFKA_ADVERT_LISTANER_PORT=19092
+    depends_on: 
+      - kafka-zookeeper
+    links:
+      - kafka-zookeeper
+    ports:
+      - 19092:9092
+    tty: true
+
+  kafka-broker_2:
+    image: hs47/kafka:latest
+    hostname: kafka-broker_2
+    container_name: kafka-broker_2
+    environment:
+      - KAFKA_BROKER_ID=2
+      - ZOOKEEPER_HOSTNAME=kafka-zookeeper
+      - KAFKA_ADVERT_LISTANER_HOST=localhost
+      - KAFKA_ADVERT_LISTANER_PORT=19093
+    depends_on:
+      - kafka-zookeeper
+    links:
+      - kafka-zookeeper
+    ports:
+      - 19093:9092
+    tty: true
+
+
+
+
+
+
+
+
+
+  
+
+
