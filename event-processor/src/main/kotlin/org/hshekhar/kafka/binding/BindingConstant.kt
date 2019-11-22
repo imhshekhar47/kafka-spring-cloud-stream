@@ -8,10 +8,10 @@ internal class BindingConstant {
         const val MV_ACTIVE_SESSION = "store-active-sessions"
 
 
-        // User sessions
-        const val SESSION_COUNT_IN = "session-count-in"
-        const val SESSION_COUNT_OUT = "session-count-out"
+        // Transaction
+        const val TRANSACTION_IN = "transaction-in"
+        const val TRANSACTION_OUT_STOCK = "transaction-out-stock"
 
-        const val MV_SESSION_COUNT = "store-user-count"
+        const val MV_TRANSACTION = "store-stock"
     }
 }

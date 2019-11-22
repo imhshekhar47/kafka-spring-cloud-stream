@@ -1,5 +1,10 @@
 # kafka-spring-cloud-stream
 A sample application to demonstrate operation using spring cloud stream for kafka.
+
+# Scenarios 
+Given
+- Users page visit events sent to kafka
+- Stock transaction events sent to kafka  
  
 ## References
 ### Articles

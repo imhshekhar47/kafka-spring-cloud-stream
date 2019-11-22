@@ -1,7 +1,7 @@
 package org.hshekhar.kafka.emitter
 
-import org.hshekhar.kafka.binding.SessionBinding
-import org.hshekhar.kafka.model.PageVisit
+import org.hshekhar.kafka.binding.TransactionBinding
+import org.hshekhar.kafka.model.Transaction
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
@@ -14,8 +14,7 @@ import java.util.concurrent.TimeUnit
 import kotlin.random.Random
 
 @Component
-class PageVisitEventEmitter(val binding: SessionBinding) : CommandLineRunner {
-
+class TransactionEmitter(val binding: TransactionBinding): CommandLineRunner {
     @Value("\${emitter.scheduler.pool-size:1}")
     private var poolSize: Int = 1
 
@@ -23,33 +22,30 @@ class PageVisitEventEmitter(val binding: SessionBinding) : CommandLineRunner {
     private var period: Long = 2
 
     companion object {
-        private val LOGGER: Logger = LoggerFactory.getLogger(PageVisitEventEmitter::class.java)
-        private val seedData = SeedData()
+        private val LOGGER: Logger = LoggerFactory.getLogger(TransactionEmitter::class.java)
+        val seedData = SeedData()
     }
 
-    private val pvEventMessageChannel = binding.pageVisitOutChannel()
-
-    private fun getRandomUserId(): String {
-        return "user_${Random.nextInt(0, 100)}"
-    }
+    private val transactionChannel = binding.transactionOutChannel()
 
     override fun run(vararg args: String?) {
-        LOGGER.trace("entry: run(${args.joinToString(",")})")
-
-
+        LOGGER.trace("entry: run()")
         val runnable = Runnable {
-            val pvEvent = PageVisit(
+            val randomStock = seedData.getRandomStock()
+            val transaction = Transaction(
                     userId = seedData.pickRandomUserId(),
-                    pageId = seedData.pickRandomPageId(),
-                    duration = Random.nextLong(0, 10))
+                    stockId = randomStock.first,
+                    price = randomStock.second,
+                    units = Random.nextInt(1,15)
+                    )
 
             val message = MessageBuilder
-                    .withPayload(pvEvent)
-                    .setHeader(KafkaHeaders.MESSAGE_KEY, pvEvent.userId.toByteArray())
+                    .withPayload(transaction)
+                    .setHeader(KafkaHeaders.MESSAGE_KEY, transaction.stockId.toByteArray())
                     .build()
 
             try {
-                pvEventMessageChannel.send(message)
+                transactionChannel.send(message)
                 LOGGER.debug("message sent successfully: $message")
             } catch (e: Exception) {
                 LOGGER.error("message sent failed:", e)
@@ -59,7 +55,6 @@ class PageVisitEventEmitter(val binding: SessionBinding) : CommandLineRunner {
         LOGGER.trace("Scheduling event emitter [pool=$poolSize, period=$period]")
         Executors.newScheduledThreadPool(poolSize)
                 .scheduleAtFixedRate(runnable, 5, period, TimeUnit.SECONDS)
-
         LOGGER.trace("exit: run()")
     }
 }

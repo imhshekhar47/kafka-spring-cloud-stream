@@ -11,8 +11,8 @@ internal class StockSerdeTest {
 
     private fun getTestItem(): Pair<String, Stock> {
         return Pair(
-                """{"name":"TEST","price":0.0,"timestamp":"$START_DATE_STRING"}""",
-                Stock(name = "TEST", price = 0.0, timestamp = START_DATE)
+                """{"id":"TEST","price":0.0,"timestamp":"$START_DATE_STRING"}""",
+                Stock(id = "TEST", price = 0.0, timestamp = START_DATE)
         )
     }
 

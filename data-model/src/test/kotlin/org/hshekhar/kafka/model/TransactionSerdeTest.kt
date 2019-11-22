@@ -13,7 +13,7 @@ internal class TransactionSerdeTest {
     private fun getTestItem(): Pair<String, Transaction> {
         return Pair(
                 """{}""",
-                Transaction(userId = "test", stockId = "TEST", units = 1, timestamp = START_DATE)
+                Transaction(userId = "test", stockId = "TEST", price = 1.0, units = 1, timestamp = START_DATE)
         )
     }
 
@@ -22,6 +22,7 @@ internal class TransactionSerdeTest {
         val bytes = serde.serializer().serialize(null, getTestItem().second)
 
         assertNotNull(bytes, "Bytes should not be null")
+        assertEquals(getTestItem().first, String(bytes), "String form should match")
     }
 
     @Test

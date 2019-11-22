@@ -3,10 +3,9 @@ package org.hshekhar.kafka.model
 import org.apache.kafka.common.serialization.Deserializer
 import org.apache.kafka.common.serialization.Serde
 import org.apache.kafka.common.serialization.Serializer
-import java.time.Instant
 import java.util.*
 
-class Stock(val name: String, val price: Double, val timestamp: Date = Date())
+class Stock(val id: String, val price: Double, val timestamp: Date = Date())
 
 class StockDeserializer : Deserializer<Stock> {
     override fun deserialize(topic: String?, data: ByteArray?): Stock? {

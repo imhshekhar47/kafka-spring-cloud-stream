@@ -5,7 +5,7 @@ import org.apache.kafka.common.serialization.Serde
 import org.apache.kafka.common.serialization.Serializer
 import java.util.*
 
-data class Transaction(val userId: String, val stockId: String, val units: Int, val timestamp: Date = Date())
+data class Transaction(val userId: String, val stockId: String, val price: Double, val units: Int, val timestamp: Date = Date())
 
 class TransactionSerializer : Serializer<Transaction> {
     override fun serialize(topic: String?, data: Transaction?): ByteArray? {

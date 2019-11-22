@@ -4,6 +4,7 @@ import org.apache.kafka.streams.state.QueryableStoreTypes
 import org.apache.kafka.streams.state.ReadOnlyKeyValueStore
 import org.hshekhar.kafka.binding.BindingConstant
 import org.hshekhar.kafka.model.SessionState
+import org.hshekhar.kafka.model.Stock
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.cloud.stream.binder.kafka.streams.InteractiveQueryService
@@ -35,5 +36,22 @@ class TopicController(private val queryService: InteractiveQueryService){
 
         LOGGER.trace("exit: getActiveSession(): ${listOfUser.size}")
         return listOfUser.sortedBy { state -> state.userId }
+    }
+
+
+    @GetMapping(value = ["/stock/ticker"])
+    fun getLatestStockPrice(): List<Stock> {
+        LOGGER.trace("entry: getLatestStockPrice()")
+        val listOfStock = mutableListOf<Stock>()
+        val queryStoreType : ReadOnlyKeyValueStore<String, Stock> =
+                queryService.getQueryableStore(BindingConstant.MV_TRANSACTION, QueryableStoreTypes.keyValueStore())
+
+        queryStoreType.all().forEach {
+            listOfStock.add(it.value)
+        }
+
+        LOGGER.trace("exit: getLatestStockPrice()")
+
+        return listOfStock.sortedBy { stock -> stock.id }
     }
 }
